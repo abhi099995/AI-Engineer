@@ -58,7 +58,7 @@ def find_optimal_threshold(y_true: np.ndarray, y_proba: np.ndarray) -> float:
     return float(thresholds[best_idx])
 
 
-def evaluate(threshold: float | None = None) -> dict:
+def evaluate(threshold: float = None) -> dict:
     if not MODEL_PATH.exists():
         print(f"Model not found at {MODEL_PATH}. Run train.py first.")
         return {}
