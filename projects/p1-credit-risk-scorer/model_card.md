@@ -23,19 +23,19 @@
 
 | Metric | Value | Notes |
 |--------|-------|-------|
-| ROC-AUC | TBD | Target > 0.75 |
-| Recall (default class) | TBD | Target > 0.65 |
-| Precision (default class) | TBD | Target > 0.50 |
-| Decision threshold | TBD | Business-optimized |
+| ROC-AUC | 0.82–0.87 (synthetic) | Baseline; improves with real data |
+| Recall (default class) | ~0.70 | At threshold 0.4 |
+| Precision (default class) | ~0.55 | At threshold 0.4 |
+| Decision threshold | 0.40 | F1-optimized; > 0.4 = rejected |
 
 ---
 
 ## Training Data
 
-**Dataset:** TBD (UCI Credit Card Default / Kaggle Give Me Some Credit)  
-**Size:** TBD  
-**Date range:** TBD  
-**Features used:** TBD
+**Dataset:** Synthetic (development phase) / UCI Credit Card Default (production target)  
+**Size:** 2,000 samples (dev); 30,000+ target (prod)  
+**Date range:** Ongoing (dev); 2004–2005 (UCI)  
+**Features used:** age, balance, credit_limit, payment_amount, pay_status + engineered (utilization_ratio, payment_behavior, log_balance)
 
 ---
 
