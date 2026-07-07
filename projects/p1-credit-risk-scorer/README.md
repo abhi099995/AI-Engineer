@@ -15,12 +15,12 @@ This project builds a production-style credit risk scoring API backed by a train
 
 ## Learning Goals
 
-- [ ] End-to-end ML pipeline: data → features → train → evaluate → serve
+- [x] End-to-end ML pipeline: data → features → train → evaluate → serve
 - [ ] Handle class imbalance (defaults are rare)
 - [ ] Compare Logistic Regression, Random Forest, XGBoost
-- [ ] Tune decision threshold based on business cost
-- [ ] Serve predictions via FastAPI
-- [ ] Write model card
+- [x] Tune decision threshold based on business cost
+- [x] Serve predictions via FastAPI
+- [x] Write model card
 
 ## Dataset
 
@@ -95,6 +95,12 @@ p1-credit-risk-scorer/
 - [ ] Week 2: Feature engineering, model comparison
 - [ ] Week 3: Threshold tuning, FastAPI, Dockerize
 - [ ] Week 4: Tests, model card, final README
+
+Current progress:
+- [x] Threshold tuning implemented in `src/evaluate.py`
+- [x] FastAPI endpoints implemented in `api/main.py`
+- [x] Test suite added in `tests/test_predict.py` (7 passing)
+- [x] Model card completed in `model_card.md`
 
 ## Tradeoffs and Decisions
 
