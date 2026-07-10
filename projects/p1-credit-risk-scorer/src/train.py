@@ -11,7 +11,6 @@ Outputs:
 """
 
 import os
-import hashlib
 import logging
 from pathlib import Path
 
@@ -73,6 +72,25 @@ def _generate_synthetic_data(n: int = 2000) -> pd.DataFrame:
     return df
 
 
+def _compute_scale_pos_weight(y: pd.Series) -> float:
+    """Compute a stable scale_pos_weight for XGBoost.
+
+    Falls back to 1.0 when a class is missing to avoid divide-by-zero.
+    """
+    negative_count = int((y == 0).sum())
+    positive_count = int((y == 1).sum())
+
+    if positive_count == 0 or negative_count == 0:
+        log.warning(
+            "Detected single-class training labels (neg=%d, pos=%d); using scale_pos_weight=1.0",
+            negative_count,
+            positive_count,
+        )
+        return 1.0
+
+    return float(negative_count) / float(positive_count)
+
+
 def train(
     n_estimators: int = 200,
     max_depth: int = 6,
@@ -88,7 +106,7 @@ def train(
     X_train_t = pipeline.fit_transform(X_train)
     X_test_t = pipeline.transform(X_test)
 
-    scale_pos_weight = float((y_train == 0).sum()) / float((y_train == 1).sum())
+    scale_pos_weight = _compute_scale_pos_weight(y_train)
 
     model = XGBClassifier(
         n_estimators=n_estimators,
@@ -107,8 +125,10 @@ def train(
     model.fit(X_train_t, y_train)
 
     test_proba = model.predict_proba(X_test_t)[:, 1]
+    test_pred = (test_proba >= 0.4).astype(int)
     test_auc = roc_auc_score(y_test, test_proba)
     log.info("Test ROC-AUC: %.4f", test_auc)
+    log.info("Test classification report:\n%s", classification_report(y_test, test_pred, digits=4))
 
     params = {
         "n_estimators": n_estimators,
