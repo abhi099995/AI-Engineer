@@ -83,6 +83,15 @@ def _get_test_client() -> TestClient:
     return TestClient(app)
 
 
+def _force_model_unloaded() -> None:
+    import sys
+    from pathlib import Path
+    sys.path.insert(0, str(Path(__file__).parents[1]))
+    import api.main as main
+
+    main._artifact = None
+
+
 def test_health_endpoint() -> None:
     client = _get_test_client()
     response = client.get("/health")
@@ -121,3 +130,32 @@ def test_batch_predict_empty_list_raises_422() -> None:
     client = _get_test_client()
     response = client.post("/predict/batch", json={"applicants": []})
     assert response.status_code == 422
+
+
+def test_predict_returns_503_when_model_unavailable() -> None:
+    client = _get_test_client()
+    _force_model_unloaded()
+    response = client.post("/predict", json={
+        "age": 30,
+        "balance": 5000,
+        "credit_limit": 10000,
+        "payment_amount": 300,
+        "pay_status": 0,
+    })
+    assert response.status_code == 503
+    assert "Model not loaded" in response.json()["detail"]
+
+
+def test_batch_predict_returns_503_when_model_unavailable() -> None:
+    client = _get_test_client()
+    _force_model_unloaded()
+    response = client.post("/predict/batch", json={
+        "applicants": [{
+            "age": 30,
+            "balance": 5000,
+            "credit_limit": 10000,
+            "payment_amount": 300,
+            "pay_status": 0,
+        }]
+    })
+    assert response.status_code == 503
