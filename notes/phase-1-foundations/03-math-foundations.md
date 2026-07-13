@@ -94,6 +94,21 @@ $$\frac{dy}{dx} = \frac{dy}{du} \cdot \frac{du}{dx}$$
 
 ---
 
+---
+
+## 5. Classification Thresholds & Precision-Recall Intuition
+
+- A classifier outputs a **probability score** (0–1); a **threshold** converts it to a binary label (default/no-default)
+- **Default threshold is 0.5**, but this is almost never optimal on imbalanced data — you must tune it
+- Lowering the threshold → more positives predicted → **recall ↑, precision ↓** (catch more true defaults, but also flag more good borrowers)
+- Raising the threshold → fewer positives predicted → **precision ↑, recall ↓** (very confident before flagging, but miss more real defaults)
+- The **Precision-Recall curve** shows this tradeoff across all thresholds; the **area under it (PR-AUC)** is a better metric than ROC-AUC when positives are rare
+- **Optimal threshold** depends on the business cost: in credit risk, a false negative (missed default) is far more expensive than a false positive — so you deliberately lower the threshold to recover recall
+- Use `sklearn.metrics.precision_recall_curve` to sweep thresholds, then pick the one that maximises the metric that matters (e.g. F1, or a custom cost function)
+- Rule of thumb: **check the PR curve first, tune threshold second, report both precision and recall** — never report accuracy alone on imbalanced data
+
+---
+
 ## Personal Notes
 - The math is not required to be mastered before building — learn it alongside building
 - Priority order for ML: linear algebra → calculus basics → probability → statistics
