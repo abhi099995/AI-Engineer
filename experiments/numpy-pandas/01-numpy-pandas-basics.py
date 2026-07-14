@@ -109,3 +109,61 @@ print("  - tenure_months negatively correlated with churn (longer = less churn)"
 print("  - support_tickets positively correlated (more tickets = more at risk)")
 print("  - monthly_spend has weak correlation (spend alone doesn't predict churn)")
 print("  - Next step: build a baseline logistic regression on this dataset")
+
+
+# ──────────────────────────────────────────────
+# PART 3: One-Step Gradient Descent Tie-In
+# ──────────────────────────────────────────────
+
+print("\n" + "=" * 50)
+print("PART 3: Logistic Gradient Descent (Tiny Demo)")
+print("=" * 50)
+
+# Small deterministic toy data (2 features, binary target)
+X_toy = np.array([
+    [0.2, 1.0],
+    [1.0, 1.5],
+    [1.2, 0.7],
+    [2.0, 1.8],
+], dtype=float)
+y_toy = np.array([0.0, 0.0, 1.0, 1.0], dtype=float)
+
+w = np.zeros(2, dtype=float)
+b = 0.0
+lr = 0.1
+
+
+def sigmoid(z: np.ndarray) -> np.ndarray:
+    return 1.0 / (1.0 + np.exp(-z))
+
+
+def bce_loss(y_true: np.ndarray, y_prob: np.ndarray) -> float:
+    eps = 1e-12
+    y_prob = np.clip(y_prob, eps, 1 - eps)
+    return float(-np.mean(y_true * np.log(y_prob) + (1 - y_true) * np.log(1 - y_prob)))
+
+
+# Before update
+logits_before = X_toy @ w + b
+probs_before = sigmoid(logits_before)
+loss_before = bce_loss(y_toy, probs_before)
+
+# Gradient for logistic regression with BCE: dw = X^T (p - y) / n, db = mean(p - y)
+errors = probs_before - y_toy
+dw = (X_toy.T @ errors) / len(X_toy)
+db = float(np.mean(errors))
+
+# One gradient descent step
+w = w - lr * dw
+b = b - lr * db
+
+# After update
+logits_after = X_toy @ w + b
+probs_after = sigmoid(logits_after)
+loss_after = bce_loss(y_toy, probs_after)
+
+print(f"Loss before step: {loss_before:.6f}")
+print(f"Loss after  step: {loss_after:.6f}")
+print(f"Updated weights: {np.round(w, 4)}")
+print(f"Updated bias: {b:.4f}")
+print("Expectation: loss should decrease after this step.")

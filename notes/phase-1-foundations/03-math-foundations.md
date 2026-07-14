@@ -92,6 +92,24 @@ $$\frac{dy}{dx} = \frac{dy}{du} \cdot \frac{du}{dx}$$
 
 - Every backward pass in a neural net applies the chain rule recursively
 
+### Logistic Regression Gradient Intuition (Practical)
+
+- For binary classification, logistic regression predicts:
+$$\hat{y} = \sigma(z), \quad z = w^T x + b, \quad \sigma(z)=\frac{1}{1+e^{-z}}$$
+- With binary cross-entropy loss:
+$$L = -\frac{1}{n}\sum_{i=1}^{n} \left[y_i\log(\hat{y}_i) + (1-y_i)\log(1-\hat{y}_i)\right]$$
+- A useful simplification from the chain rule:
+$$\frac{\partial L}{\partial z_i} = \hat{y}_i - y_i$$
+- So gradients become:
+$$\nabla_w L = \frac{1}{n}X^T(\hat{y}-y), \quad \frac{\partial L}{\partial b} = \frac{1}{n}\sum_{i=1}^{n}(\hat{y}_i-y_i)$$
+- Update rule:
+$$w \leftarrow w - \alpha\nabla_w L, \quad b \leftarrow b - \alpha\frac{\partial L}{\partial b}$$
+
+Interpretation:
+- If prediction is too high for a negative class sample, gradient pushes weights down.
+- If prediction is too low for a positive class sample, gradient pushes weights up.
+- Over many samples, this nudges the decision boundary toward lower classification error.
+
 ---
 
 ---
@@ -112,3 +130,8 @@ $$\frac{dy}{dx} = \frac{dy}{du} \cdot \frac{du}{dx}$$
 ## Personal Notes
 - The math is not required to be mastered before building — learn it alongside building
 - Priority order for ML: linear algebra → calculus basics → probability → statistics
+
+## See Also
+- [NumPy Basics](01-numpy-basics.md)
+- [Pandas for ML](02-pandas-for-ml.md)
+- [P1 Credit Risk Scorer README](../../projects/p1-credit-risk-scorer/README.md)
