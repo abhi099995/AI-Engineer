@@ -12,6 +12,11 @@ Goals:
 import numpy as np
 import pandas as pd
 from collections import Counter
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import confusion_matrix, precision_score, recall_score, roc_auc_score
+from sklearn.model_selection import train_test_split
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import StandardScaler
 
 # ──────────────────────────────────────────────
 # PART 1: NumPy Operations
@@ -84,14 +89,14 @@ churn_by_plan = df.groupby("plan")["churned"].agg(["mean", "count"]).round(3)
 churn_by_plan.columns = ["churn_rate", "count"]
 print("\nChurn rate by plan:\n", churn_by_plan)
 
+# Fill missing values (would use separate train/test fit in real project)
+df["monthly_spend"] = df["monthly_spend"].fillna(df["monthly_spend"].median())
+df["age"] = df["age"].fillna(df["age"].median())
+
 # Feature engineering
 df["high_spender"] = (df["monthly_spend"] > df["monthly_spend"].median()).astype(int)
 df["is_new"] = (df["tenure_months"] <= 6).astype(int)
 df["clv_estimate"] = df["monthly_spend"] * df["tenure_months"]
-
-# Fill missing values (would use separate train/test fit in real project)
-df["monthly_spend"] = df["monthly_spend"].fillna(df["monthly_spend"].median())
-df["age"] = df["age"].fillna(df["age"].median())
 
 # One-hot encode plan
 df_encoded = pd.get_dummies(df, columns=["plan"], drop_first=True)
@@ -112,11 +117,68 @@ print("  - Next step: build a baseline logistic regression on this dataset")
 
 
 # ──────────────────────────────────────────────
-# PART 3: One-Step Gradient Descent Tie-In
+# PART 3: Baseline Logistic Regression
 # ──────────────────────────────────────────────
 
 print("\n" + "=" * 50)
-print("PART 3: Logistic Gradient Descent (Tiny Demo)")
+print("PART 3: Baseline Logistic Regression")
+print("=" * 50)
+
+feature_cols = [
+    "age",
+    "tenure_months",
+    "monthly_spend",
+    "support_tickets",
+    "high_spender",
+    "is_new",
+    "clv_estimate",
+    "plan_enterprise",
+    "plan_pro",
+]
+
+X_model = df_encoded[feature_cols]
+y_model = df_encoded["churned"]
+
+X_train, X_test, y_train, y_test = train_test_split(
+    X_model,
+    y_model,
+    test_size=0.2,
+    random_state=42,
+    stratify=y_model,
+)
+
+baseline_model = make_pipeline(
+    StandardScaler(),
+    LogisticRegression(
+        class_weight="balanced",
+        random_state=42,
+        solver="liblinear",
+        max_iter=2000,
+    ),
+)
+baseline_model.fit(X_train, y_train)
+
+y_proba = baseline_model.predict_proba(X_test)[:, 1]
+y_pred = (y_proba >= 0.5).astype(int)
+
+auc = roc_auc_score(y_test, y_proba)
+precision = precision_score(y_test, y_pred, zero_division=0)
+recall = recall_score(y_test, y_pred, zero_division=0)
+cm = confusion_matrix(y_test, y_pred)
+
+print(f"ROC-AUC:   {auc:.4f}")
+print(f"Precision: {precision:.4f}")
+print(f"Recall:    {recall:.4f}")
+print("Confusion matrix:")
+print(cm)
+
+
+# ──────────────────────────────────────────────
+# PART 4: One-Step Gradient Descent Tie-In
+# ──────────────────────────────────────────────
+
+print("\n" + "=" * 50)
+print("PART 4: Logistic Gradient Descent (Tiny Demo)")
 print("=" * 50)
 
 # Small deterministic toy data (2 features, binary target)

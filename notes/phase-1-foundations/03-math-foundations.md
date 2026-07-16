@@ -125,6 +125,15 @@ Interpretation:
 - Use `sklearn.metrics.precision_recall_curve` to sweep thresholds, then pick the one that maximises the metric that matters (e.g. F1, or a custom cost function)
 - Rule of thumb: **check the PR curve first, tune threshold second, report both precision and recall** — never report accuracy alone on imbalanced data
 
+### Reflection From Synthetic Churn Baseline
+
+- In the logistic baseline run, gradients from many samples pushed weights toward a boundary that improved ranking (ROC-AUC) even when class labels were not perfect at a fixed threshold.
+- Seeing precision and recall together made the model behavior clearer than a single score: we can catch more churners only by accepting more false alarms.
+- Class weighting changed the effective gradient contribution of minority positives, which raised sensitivity to churn risk.
+- The confusion matrix made threshold effects concrete: moving the cutoff shifts errors between false positives and false negatives.
+- Gradient updates optimize probability estimates, but business decisions happen at threshold time; those are related but separate steps.
+- For imbalanced churn/default tasks, threshold tuning matters more than accuracy because high accuracy can still hide poor positive-class recall.
+
 ---
 
 ## Personal Notes
