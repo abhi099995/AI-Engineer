@@ -3,7 +3,7 @@
 > 8 years of software development experience → AI Engineer
 > Start date: July 2026 | Target: January 2027
 
-![Progress](https://img.shields.io/badge/Progress-Starting-blue)
+![Progress](https://img.shields.io/badge/Progress-In%20Progress-blue)
 ![Phase](https://img.shields.io/badge/Phase-1%20Classical%20ML-orange)
 
 ---
