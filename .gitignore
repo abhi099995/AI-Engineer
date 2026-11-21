@@ -66,6 +66,13 @@ mlartifacts/
 # Docker
 *.tar
 
+# Terraform
+**/.terraform/
+*.tfstate
+*.tfstate.*
+crash.log
+crash.*.log
+
 # Coverage
 .coverage
 htmlcov/
