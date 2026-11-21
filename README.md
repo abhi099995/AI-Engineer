@@ -40,6 +40,7 @@ Every module contains notes, implementations, and projects — committed daily t
 | P6 | [Incident Root Cause Analyzer](./projects/p6-incident-rca/) | LLM + RAG + Agents | OpenAI, vector DB, Slack API | ⏳ Upcoming |
 | P7 | [Code Review Bot](./projects/p7-code-review-bot/) | GenAI + GitHub API | LLM, GitHub Actions, Python | ⏳ Upcoming |
 | P8 | [AI Observability Dashboard](./projects/p8-ai-observability/) | MLOps + Monitoring | FastAPI, Prometheus, Grafana | ⏳ Upcoming |
+| Capstone | AI-Powered Cloud Assistant (private repo) | LLM + Cloud Ops | AWS SAM, Terraform, Python | ✅ Submitted |
 
 ---
 
